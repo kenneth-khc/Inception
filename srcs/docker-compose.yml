@@ -3,9 +3,20 @@ name: Inception
 services:
   nginx:
     build: ./requirements/nginx/
+    secrets:
+      - ssl_certificate
+      - ssl_certificate_private_key
+    ports:
+      - 80:80
+      - 443:443
+  # mariadb:
+  #   build: ./requirements/mariadb/
 
-  mariadb:
-    build: ./requirements/mariadb/
+  # wordpress:
+  #   build: ./requirements/wordpress/
 
-  wordpress:
-    build: ./requirements/wordpress/
+secrets:
+  ssl_certificate:
+    file: ../secrets/www.kecheong.42.fr.crt
+  ssl_certificate_private_key:
+    file: ../secrets/www.kecheong.42.fr.key
