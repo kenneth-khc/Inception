@@ -2,24 +2,71 @@ name: Inception
 
 services:
   nginx:
+    depends_on:
+      - wordpress
     build: ./requirements/nginx/
     secrets:
       - ssl_certificate
       - ssl_certificate_private_key
     ports:
-      - 80:80
       - 443:443
+    networks:
+      - inception-backend
+    volumes:
+      - wordpress-files:/srv/wordpress
 
   wordpress:
+    depends_on:
+      - mariadb
+    #     condition: service_started
     build: ./requirements/wordpress/
     ports:
       - 9000:9000
-  # mariadb:
-  #   build: ./requirements/mariadb/
+    secrets:
+      - mariadb_password
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_NAME: wordpress_db
+      WORDPRESS_DB_USER: wordpress_user
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/mariadb_password
+    volumes:
+      - wordpress-files:/srv/wordpress
+    networks:
+      - inception-backend
 
+  mariadb:
+    build: ./requirements/mariadb/
+    ports:
+      - 3306:3306
+    secrets:
+      # - mariadb_root_password
+      - mariadb_password
+      # - ssl_certificate
+      # - ssl_certificate_private_key
+    environment:
+      # MARIADB_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
+      MARIADB_DATABASE: wordpress_db
+      MARIADB_USER: wordpress_user
+      MARIADB_PASSWORD_FILE: /run/secrets/mariadb_password
+    volumes:
+      - db-data:/var/lib/mysql/
+    networks:
+      - inception-backend
 
 secrets:
   ssl_certificate:
     file: ../secrets/www.kecheong.42.fr.crt
   ssl_certificate_private_key:
     file: ../secrets/www.kecheong.42.fr.key
+  # mariadb_root_password:
+  #   file: ../secrets/db_root_password.txt
+  mariadb_password:
+    file: ../secrets/db_password.txt
+
+volumes:
+  db-data:
+  wordpress-files:
+
+
+networks:
+  inception-backend:
