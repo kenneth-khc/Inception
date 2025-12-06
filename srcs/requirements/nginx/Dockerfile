@@ -8,5 +8,5 @@ RUN apt update -y && apt install -y nginx
 WORKDIR /etc/nginx/
 COPY ./conf ./nginx.conf
 
-EXPOSE 80 443
+EXPOSE 443/tcp
 ENTRYPOINT ["nginx"]
