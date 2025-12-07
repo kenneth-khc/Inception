@@ -20,21 +20,18 @@ until socat -u OPEN:/dev/null UNIX-CONNECT:"$mariadb_unix_socket" 2>/dev/null
   done
 
 exitOnError() {
-  echo "Something went wrong. Exiting."
+  echo "Something went wrong. Exiting." >&2
   exit 1
 }
 trap exitOnError ERR
 
-# TODO: read these from env
-MARIADB_DATABASE=wordpress_db
-MARIADB_USER=wordpress_user
-MARIADB_PASSWORD=mysupersecretuserpassword
-echo "Creating user $MARIADB_USER..."
-mariadb -e "CREATE DATABASE IF NOT EXISTS $MARIADB_DATABASE;"
-mariadb -e "CREATE USER IF NOT EXISTS '$MARIADB_USER'@'%' IDENTIFIED BY '$MARIADB_PASSWORD'"
-mariadb -e "GRANT ALL PRIVILEGES ON $MARIADB_DATABASE.* TO '$MARIADB_USER'@'%';"
+DB_PASSWORD=$(cat "$DB_PASSWORD_FILE")
+echo "Creating user $DB_USER..."
+mariadb -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
+mariadb -e "CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';"
+mariadb -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%';"
 mariadb -e "FLUSH PRIVILEGES;"
-echo "Done creating user $MARIADB_USER..."
+echo "Done creating user $DB_USER..."
 echo "Done setting up MariaDB"
 
 mariadb-admin shutdown

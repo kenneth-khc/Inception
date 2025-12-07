@@ -6,62 +6,69 @@ services:
       - wordpress
     build: ./requirements/nginx/
     secrets:
-      - ssl_certificate
-      - ssl_certificate_private_key
+      - ssl-certificate
+      - ssl-certificate-private-key
     ports:
       - 443:443
     networks:
       - inception-backend
     volumes:
-      - wordpress-files:/srv/wordpress
+      - wordpress-files:${WORDPRESS_PATH}
 
   wordpress:
     depends_on:
       - mariadb
-    #     condition: service_started
-    build: ./requirements/wordpress/
-    ports:
-      - 9000:9000
-    secrets:
-      - mariadb_password
-    environment:
-      WORDPRESS_DB_HOST: mariadb:3306
-      WORDPRESS_DB_NAME: wordpress_db
-      WORDPRESS_DB_USER: wordpress_user
-      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/mariadb_password
+    build:
+      context: ./requirements/wordpress/
+      dockerfile: Dockerfile
     volumes:
-      - wordpress-files:/srv/wordpress
+      - wordpress-files:${WORDPRESS_PATH}
     networks:
       - inception-backend
+    secrets:
+      - db-password
+      - wp-admin-password
+      - wp-user-password
+    environment:
+      WORDPRESS_PATH: ${WORDPRESS_PATH}
+      WORDPRESS_DB_HOST: ${DB_HOST}
+      WORDPRESS_DB_PORT: ${DB_PORT}
+      WORDPRESS_DB_NAME: ${DB_NAME}
+      WORDPRESS_DB_USER: ${DB_USER}
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db-password
+      WORDPRESS_ADMIN_NAME: ${WORDPRESS_ADMIN_NAME}
+      WORDPRESS_ADMIN_EMAIL: ${WORDPRESS_ADMIN_EMAIL}
+      WORDPRESS_ADMIN_PASSWORD_FILE: /run/secrets/wp-admin-password
+      WORDPRESS_USER_NAME: ${WORDPRESS_USER_NAME}
+      WORDPRESS_USER_EMAIL: ${WORDPRESS_USER_EMAIL}
+      WORDPRESS_USER_PASSWORD_FILE: /run/secrets/wp-user-password
 
   mariadb:
-    build: ./requirements/mariadb/
-    ports:
-      - 3306:3306
-    secrets:
-      # - mariadb_root_password
-      - mariadb_password
-      # - ssl_certificate
-      # - ssl_certificate_private_key
-    environment:
-      # MARIADB_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
-      MARIADB_DATABASE: wordpress_db
-      MARIADB_USER: wordpress_user
-      MARIADB_PASSWORD_FILE: /run/secrets/mariadb_password
+    build:
+      context: ./requirements/mariadb/
+      dockerfile: Dockerfile
     volumes:
-      - db-data:/var/lib/mysql/
+      - db-data:${DB_PATH:-/var/lib/mysql}
     networks:
       - inception-backend
+    secrets:
+      - db-password
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD_FILE: /run/secrets/db-password
 
 secrets:
-  ssl_certificate:
-    file: ../secrets/www.kecheong.42.fr.crt
-  ssl_certificate_private_key:
-    file: ../secrets/www.kecheong.42.fr.key
-  # mariadb_root_password:
-  #   file: ../secrets/db_root_password.txt
-  mariadb_password:
-    file: ../secrets/db_password.txt
+  ssl-certificate:
+    file: ../secrets/kecheong.42.fr.crt
+  ssl-certificate-private-key:
+    file: ../secrets/kecheong.42.fr.key
+  db-password:
+    file: ../secrets/db-password.txt
+  wp-admin-password:
+    file: ../secrets/wp-admin-password.txt
+  wp-user-password:
+    file: ../secrets/wp-user-password.txt
 
 volumes:
   db-data:

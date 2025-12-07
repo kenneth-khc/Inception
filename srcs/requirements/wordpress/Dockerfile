@@ -25,12 +25,11 @@ RUN rm -rf ./www.conf
 # TODO: seems weird to change the owner. look at the permissions later
 RUN chown -R wordpress:wordpress /run/php
 
-WORKDIR /srv
 RUN wp core download \
     --allow-root \
-    --path=wordpress
-RUN chown -R wordpress:wordpress wordpress/
+    --path=${WORDPRESS_PATH:-/srv/wordpress}
+RUN chown -R wordpress:wordpress ${WORDPRESS_PATH:-/srv/wordpress}
+WORKDIR ${WORDPRESS_PATH:-/srv/wordpress}
 USER wordpress
-WORKDIR /srv/wordpress
 EXPOSE 9000
 ENTRYPOINT ["setup-wordpress.sh"]
