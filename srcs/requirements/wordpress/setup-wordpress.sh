@@ -46,6 +46,7 @@ else
       --admin_email="kecheong4242@email.com" \
       --skip-email \
       --locale="en_US"
+   wp user create user user@email.com --role=contributor
 fi
 
 exec php-fpm8.4 --nodaemonize
