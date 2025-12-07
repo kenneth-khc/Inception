@@ -7,6 +7,9 @@ up:
 build:
 	docker compose -f $(COMPOSE_FILE) build
 
+build_no_cache:
+	docker compose -f $(COMPOSE_FILE) build --no-cache
+
 down:
 	docker compose -f $(COMPOSE_FILE) down
 
