@@ -4,15 +4,15 @@ echo "Setting up MariaDB..."
 mariadbd-safe --no-watch
 
 attempt=0
-max_attempts=30
+max_attempts=10
 mariadb_unix_socket='/run/mysqld/mysqld.sock'
 until socat -u OPEN:/dev/null UNIX-CONNECT:"$mariadb_unix_socket" 2>/dev/null
   do
     attempt=$((attempt + 1))
     echo "Waiting for $mariadb_unix_socket... (attempt $attempt/$max_attempts)"
 
-    if [[ $attempt -gt $max_attempts ]]; then
-      echo "Could not connect to $mariadb_unix_socket after $max_attempts. Exiting."
+    if [[ $attempt -ge $max_attempts ]]; then
+      echo "Could not connect to $mariadb_unix_socket after $max_attempts attempts. Exiting."
       exit 1
     fi
 
