@@ -29,7 +29,7 @@ WORKDIR /srv
 RUN wp core download \
     --allow-root \
     --path=wordpress
-RUN chown wordpress:wordpress wordpress/
+RUN chown -R wordpress:wordpress wordpress/
 USER wordpress
 WORKDIR /srv/wordpress
 EXPOSE 9000
