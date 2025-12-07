@@ -54,4 +54,9 @@ else
       --role=contributor
 fi
 
+favicon="$WORDPRESS_PATH/wp-includes/images/favicon.ico"
+if [[ ! -f "$favicon" && -f /tmp/cat-favicon.png ]]; then
+   mv /tmp/cat-favicon.png "$favicon"
+fi
+
 exec php-fpm8.4 --nodaemonize

@@ -30,6 +30,7 @@ RUN wp core download \
     --path=${WORDPRESS_PATH:-/srv/wordpress}
 RUN chown -R wordpress:wordpress ${WORDPRESS_PATH:-/srv/wordpress}
 WORKDIR ${WORDPRESS_PATH:-/srv/wordpress}
+COPY --chown=wordpress:wordpress ./cat-favicon.png /tmp/cat-favicon.png
 USER wordpress
 EXPOSE 9000
 ENTRYPOINT ["setup-wordpress.sh"]
