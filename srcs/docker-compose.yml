@@ -48,7 +48,7 @@ services:
       context: ./requirements/mariadb/
       dockerfile: Dockerfile
     volumes:
-      - db-data:${DB_PATH:-/var/lib/mysql}
+      - mariadb-data:${DB_PATH:-/var/lib/mysql}
     networks:
       - inception-backend
     secrets:
@@ -71,9 +71,17 @@ secrets:
     file: ../secrets/wp-user-password.txt
 
 volumes:
-  db-data:
-  wordpress-files:
+  mariadb-data:
+    driver_opts:
+      type: none
+      device: /home/kecheong/data/mariadb-data
+      o: bind
 
+  wordpress-files:
+    driver_opts:
+      type: none
+      device: /home/kecheong/data/wordpress-files
+      o: bind
 
 networks:
   inception-backend:
