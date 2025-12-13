@@ -58,6 +58,29 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD_FILE: /run/secrets/db-password
 
+  ftp:
+    # TODO: this probably depends on wordpress
+    image: ftp
+    build:
+      context: ./requirements/bonus/ftp/
+      dockerfile: Dockerfile
+      args:
+        - UID=${UID}
+        - GID=${GID}
+    volumes:
+      - wordpress-files:/srv/ftp
+    ports:
+      - name: ftp_pasv_port
+        target: 21
+        published: 21
+        protocol: tcp
+
+      # range of ports for transfers
+      - "30000-30010:30000-30010/tcp"
+
+    secrets:
+      - ftp-user-credentials
+
 secrets:
   ssl-certificate:
     file: ../secrets/kecheong.42.fr.crt
@@ -69,6 +92,8 @@ secrets:
     file: ../secrets/wp-admin-password.txt
   wp-user-password:
     file: ../secrets/wp-user-password.txt
+  ftp-user-credentials:
+    file: ${SECRETS}/ftp-user-credentials.txt
 
 volumes:
   mariadb-data:
