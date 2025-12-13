@@ -1,12 +1,8 @@
 FROM debian:stable
 
-# TODO: utilities for debugging within the container, remove later
-RUN apt update -y && apt install -y vim curl bat wget iproute2
-##################################################################
- 
-RUN apt update -y && apt install -y php-fpm php-mysql less
 
 RUN groupadd --system wordpress && useradd --system --gid wordpress wordpress
+RUN apt-get update && apt-get install -y php-fpm php-mysql less
 
 # download wp-cli
 WORKDIR /usr/local/bin/
