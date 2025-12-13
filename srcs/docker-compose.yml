@@ -90,6 +90,14 @@ services:
     secrets:
       - ftp-user-credentials
 
+  adminer:
+    image: adminer
+    build:
+      context: ./requirements/bonus/adminer/
+      dockerfile: Dockerfile
+    networks:
+      - inception-backend
+
 secrets:
   ssl-certificate:
     file: ${SECRETS}/kecheong.42.fr.crt
