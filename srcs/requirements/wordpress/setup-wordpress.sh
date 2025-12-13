@@ -52,6 +52,8 @@ else
    wp user create "$WORDPRESS_USER_NAME" "$WORDPRESS_USER_EMAIL" \
       --user_pass="$WORDPRESS_USER_PASSWORD" \
       --role=contributor
+   # set group sticky bit and write permission on uploads dir to demonstrate ftp
+   chmod -R g+sw "$WORDPRESS_PATH/wp-content/uploads"
 fi
 
 favicon="$WORDPRESS_PATH/wp-includes/images/favicon.ico"
