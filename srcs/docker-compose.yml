@@ -4,7 +4,10 @@ services:
   nginx:
     depends_on:
       - wordpress
-    build: ./requirements/nginx/
+    image: nginx
+    build:
+      context: ./requirements/nginx/
+      dockerfile: Dockerfile
     secrets:
       - ssl-certificate
       - ssl-certificate-private-key
@@ -18,9 +21,14 @@ services:
   wordpress:
     depends_on:
       - mariadb
+    image: wordpress
     build:
       context: ./requirements/wordpress/
       dockerfile: Dockerfile
+      args:
+        - UID=${UID}
+        - GID=${GID}
+        - WORDPRESS_PATH=${WORDPRESS_PATH}
     volumes:
       - wordpress-files:${WORDPRESS_PATH}
     networks:
@@ -44,6 +52,7 @@ services:
       WORDPRESS_USER_PASSWORD_FILE: /run/secrets/wp-user-password
 
   mariadb:
+    image: mariadb
     build:
       context: ./requirements/mariadb/
       dockerfile: Dockerfile
@@ -83,15 +92,15 @@ services:
 
 secrets:
   ssl-certificate:
-    file: ../secrets/kecheong.42.fr.crt
+    file: ${SECRETS}/kecheong.42.fr.crt
   ssl-certificate-private-key:
-    file: ../secrets/kecheong.42.fr.key
+    file: ${SECRETS}/kecheong.42.fr.key
   db-password:
-    file: ../secrets/db-password.txt
+    file: ${SECRETS}/db-password.txt
   wp-admin-password:
-    file: ../secrets/wp-admin-password.txt
+    file: ${SECRETS}/wp-admin-password.txt
   wp-user-password:
-    file: ../secrets/wp-user-password.txt
+    file: ${SECRETS}/wp-user-password.txt
   ftp-user-credentials:
     file: ${SECRETS}/ftp-user-credentials.txt
 
