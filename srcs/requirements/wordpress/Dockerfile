@@ -14,7 +14,6 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     mv wp-cli.phar wp && \
     chmod +x wp && \
     chown wordpress:wordpress wp
-COPY --chown=wordpress:wordpress ./setup-wordpress.sh ./setup-wordpress.sh
 
 WORKDIR /etc/php/8.4/fpm/pool.d/
 COPY ./wordpress-pool.conf ./wordpress-pool.conf
@@ -33,6 +32,8 @@ COPY --chown=wordpress:wordpress ./cat-favicon.png /tmp/cat-favicon.png
 RUN chown -R wordpress:wordpress ${WORDPRESS_PATH}
 # TODO: seems weird to change the owner. look at the permissions later
 RUN chown -R wordpress:wordpress /run/php
+COPY --chown=wordpress:wordpress \
+    ./setup-wordpress.sh /usr/local/bin/setup-wordpress.sh
 
 
 USER wordpress
