@@ -61,4 +61,22 @@ if [[ ! -f "$favicon" && -f /tmp/cat-favicon.png ]]; then
    mv /tmp/cat-favicon.png "$favicon"
 fi
 
+if ! wp plugin is-active "redis-cache"; then
+   echo "redis-cache is not activated."
+   if ! wp plugin is-installed "redis-cache"; then
+      echo "redis-cache plugin is not installed."
+      echo "Installing redis cache plugin..."
+      wp plugin install "redis-cache"
+      echo "Successfully installed redis-cache plugin."
+   fi
+   wp plugin activate "redis-cache"
+   echo "Activated redis redis-cache plugin."
+   # wp redis enable
+   wp config set WP_REDIS_HOST "redis"
+   wp config set WP_REDIS_PORT "6379"
+else
+   echo "redis-cache is already activated. Proceeding..."
+fi
+
+
 exec php-fpm8.4 --nodaemonize
