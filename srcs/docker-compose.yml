@@ -17,6 +17,7 @@ services:
       - inception-backend
     volumes:
       - wordpress-files:${WORDPRESS_PATH}
+      - redis-admin-files:/srv/redis-admin
 
   wordpress:
     depends_on:
@@ -106,6 +107,16 @@ services:
     networks:
       - inception-backend
 
+  redis-admin:
+    image: redis-admin
+    build:
+      context: ./requirements/bonus/redis-admin/
+      dockerfile: Dockerfile
+    networks:
+      - inception-backend
+    volumes:
+      - redis-admin-files:/srv/redis-admin
+
 secrets:
   ssl-certificate:
     file: ${SECRETS}/kecheong.42.fr.crt
@@ -131,6 +142,12 @@ volumes:
     driver_opts:
       type: none
       device: /home/kecheong/data/wordpress-files
+      o: bind
+
+  redis-admin-files:
+    driver_opts:
+      type: none
+      device: /home/kecheong/data/redis-admin-files
       o: bind
 
 networks:
