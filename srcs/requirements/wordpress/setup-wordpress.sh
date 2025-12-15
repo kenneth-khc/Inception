@@ -41,7 +41,7 @@ else
    echo "Installing Wordpress..."
    # TODO: map kecheong.42.fr to localhost
    wp core install \
-      --url="localhost" \
+      --url="kecheong.42.fr" \
       --title="Inception!!!" \
       --admin_user="$WORDPRESS_ADMIN_NAME" \
       --admin_password="$WORDPRESS_ADMIN_PASSWORD" \
@@ -71,12 +71,11 @@ if ! wp plugin is-active "redis-cache"; then
    fi
    wp plugin activate "redis-cache"
    echo "Activated redis redis-cache plugin."
-   # wp redis enable
    wp config set WP_REDIS_HOST "redis"
    wp config set WP_REDIS_PORT "6379"
+   wp redis enable
 else
    echo "redis-cache is already activated. Proceeding..."
 fi
-
 
 exec php-fpm8.4 --nodaemonize
