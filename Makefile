@@ -5,9 +5,10 @@ DATA_DIR := /home/kecheong/data
 WP_FILES_DIR := $(DATA_DIR)/wordpress-files
 WP_DB_DIR := $(DATA_DIR)/mariadb-data
 REDIS_ADMIN_DIR := $(DATA_DIR)/redis-admin-files
+SHOWCASE_SITE_DIR := $(DATA_DIR)/showcase-site-files
 
 up:
-	mkdir -p $(WP_FILES_DIR) $(WP_DB_DIR) $(REDIS_ADMIN_DIR)
+	mkdir -p $(WP_FILES_DIR) $(WP_DB_DIR) $(REDIS_ADMIN_DIR) $(SHOWCASE_SITE_DIR)
 	docker compose -f $(COMPOSE_FILE) up
 
 build:
@@ -25,9 +26,15 @@ down_now:
 WORDPRESS_FILES_VOLUME := inception_wordpress-files
 WORDPRESS_DB_VOLUME := inception_mariadb-data
 REDIS_ADMIN_VOLUME := inception_redis-admin-files
+SHOWCASE_SITE_VOLUME := inception_showcase-site-files
 
 clean: down
-	docker volume rm $(WORDPRESS_FILES_VOLUME) $(WORDPRESS_DB_VOLUME) $(REDIS_ADMIN_VOLUME)
-	rm -rf $(WP_FILES_DIR) $(WP_DB_DIR) $(REDIS_ADMIN_DIR)
+	docker volume rm $(WORDPRESS_FILES_VOLUME) \
+					 $(WORDPRESS_DB_VOLUME) \
+					 $(REDIS_ADMIN_VOLUME) \
+					 $(SHOWCASE_SITE_VOLUME)
+	rm -rf $(WP_FILES_DIR) $(WP_DB_DIR) $(REDIS_ADMIN_DIR) $(SHOWCASE_SITE_DIR)
+
+clean_now: down_now clean
 
 .PHONY: up build down down_now clean
