@@ -17,21 +17,23 @@ services:
       - inception-backend
     volumes:
       - wordpress-files:${WORDPRESS_PATH}
-      - redis-admin-files:/srv/redis-admin
+      - redis-admin-files:/srv/redis-admin:ro
+      - showcase-site-files:/srv/showcase-site:ro
 
   wordpress:
     depends_on:
       - mariadb
     image: wordpress
     build:
-      context: ./requirements/wordpress/
-      dockerfile: Dockerfile
+      context: ./requirements
+      dockerfile: ./wordpress/Dockerfile
       args:
         - UID=${UID}
         - GID=${GID}
         - WORDPRESS_PATH=${WORDPRESS_PATH}
     volumes:
       - wordpress-files:${WORDPRESS_PATH}
+      - showcase-site-files:/srv/showcase-site
     networks:
       - inception-backend
     secrets:
@@ -148,6 +150,12 @@ volumes:
     driver_opts:
       type: none
       device: /home/kecheong/data/redis-admin-files
+      o: bind
+
+  showcase-site-files:
+    driver_opts:
+      type: none
+      device: /home/kecheong/data/showcase-site-files
       o: bind
 
 networks:
