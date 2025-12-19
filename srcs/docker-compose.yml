@@ -19,6 +19,7 @@ services:
       - wordpress-files:${WORDPRESS_PATH}
       - redis-admin-files:/srv/redis-admin:ro
       - showcase-site-files:/srv/showcase-site:ro
+    restart: unless-stopped
 
   wordpress:
     depends_on:
@@ -53,6 +54,7 @@ services:
       WORDPRESS_USER_NAME: ${WORDPRESS_USER_NAME}
       WORDPRESS_USER_EMAIL: ${WORDPRESS_USER_EMAIL}
       WORDPRESS_USER_PASSWORD_FILE: /run/secrets/wp-user-password
+    restart: unless-stopped
 
   mariadb:
     image: mariadb
@@ -69,6 +71,7 @@ services:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD_FILE: /run/secrets/db-password
+    restart: unless-stopped
 
   ftp:
     # TODO: this probably depends on wordpress
@@ -92,6 +95,7 @@ services:
 
     secrets:
       - ftp-user-credentials
+    restart: unless-stopped
 
   adminer:
     image: adminer
@@ -100,6 +104,7 @@ services:
       dockerfile: Dockerfile
     networks:
       - inception-backend
+    restart: unless-stopped
 
   redis:
     image: redis
@@ -108,6 +113,7 @@ services:
       dockerfile: Dockerfile
     networks:
       - inception-backend
+    restart: unless-stopped
 
   redis-admin:
     image: redis-admin
@@ -118,6 +124,7 @@ services:
       - inception-backend
     volumes:
       - redis-admin-files:/srv/redis-admin
+    restart: unless-stopped
 
 secrets:
   ssl-certificate:
