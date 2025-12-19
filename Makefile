@@ -7,6 +7,8 @@ WP_DB_DIR := $(DATA_DIR)/mariadb-data
 REDIS_ADMIN_DIR := $(DATA_DIR)/redis-admin-files
 SHOWCASE_SITE_DIR := $(DATA_DIR)/showcase-site-files
 
+all: up
+
 up:
 	mkdir -p $(WP_FILES_DIR) $(WP_DB_DIR) $(REDIS_ADMIN_DIR) $(SHOWCASE_SITE_DIR)
 	docker compose -f $(COMPOSE_FILE) up
