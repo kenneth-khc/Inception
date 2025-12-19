@@ -7,6 +7,7 @@ RUN groupadd --gid ${GID} redis && \
 
 RUN apt-get update && apt-get -y install redis-server
 COPY --chown=redis:redis ./redis.conf /etc/redis/redis.conf
+RUN mkdir -p /data && chown -R redis:redis /data
 
 USER redis
 ENTRYPOINT [ "redis-server" ]
