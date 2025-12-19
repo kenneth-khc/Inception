@@ -14,9 +14,9 @@ services:
     ports:
       - 443:443
     networks:
-      - inception-backend
+      - backend
     volumes:
-      - wordpress-files:${WORDPRESS_PATH}
+      - wordpress-files:${WP_PATH}
       - redis-admin-files:/srv/redis-admin:ro
       - showcase-site-files:/srv/showcase-site:ro
     restart: unless-stopped
@@ -32,29 +32,21 @@ services:
       args:
         - UID=${UID}
         - GID=${GID}
-        - WORDPRESS_PATH=${WORDPRESS_PATH}
+        - WP_PATH=${WP_PATH}
     volumes:
-      - wordpress-files:${WORDPRESS_PATH}
+      - wordpress-files:${WP_PATH}
       - showcase-site-files:/srv/showcase-site
     networks:
-      - inception-backend
+      - backend
     secrets:
-      - db-password
-      - wp-admin-password
-      - wp-user-password
+      - db-user-credentials
+      - wp-user-credentials
+      - wp-admin-credentials
     environment:
-      WORDPRESS_PATH: ${WORDPRESS_PATH}
-      WORDPRESS_DB_HOST: ${DB_HOST}
-      WORDPRESS_DB_PORT: ${DB_PORT}
-      WORDPRESS_DB_NAME: ${DB_NAME}
-      WORDPRESS_DB_USER: ${DB_USER}
-      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db-password
-      WORDPRESS_ADMIN_NAME: ${WORDPRESS_ADMIN_NAME}
-      WORDPRESS_ADMIN_EMAIL: ${WORDPRESS_ADMIN_EMAIL}
-      WORDPRESS_ADMIN_PASSWORD_FILE: /run/secrets/wp-admin-password
-      WORDPRESS_USER_NAME: ${WORDPRESS_USER_NAME}
-      WORDPRESS_USER_EMAIL: ${WORDPRESS_USER_EMAIL}
-      WORDPRESS_USER_PASSWORD_FILE: /run/secrets/wp-user-password
+      WP_PATH: ${WP_PATH}
+      WP_DB_HOST: ${DB_HOST}
+      WP_DB_PORT: ${DB_PORT}
+      WP_DB_NAME: ${DB_NAME}
     restart: unless-stopped
 
   mariadb:
@@ -65,13 +57,11 @@ services:
     volumes:
       - mariadb-data:${DB_PATH:-/var/lib/mysql}
     networks:
-      - inception-backend
+      - backend
     secrets:
-      - db-password
+      - db-user-credentials
     environment:
       DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD_FILE: /run/secrets/db-password
     healthcheck:
       test: [ "CMD", "healthcheck.sh" ]
       interval: 5s
@@ -81,8 +71,9 @@ services:
     restart: unless-stopped
 
   ftp:
-    # TODO: this probably depends on wordpress
     image: ftp
+    depends_on:
+      - wordpress
     build:
       context: ./requirements/bonus/ftp/
       dockerfile: Dockerfile
@@ -97,7 +88,7 @@ services:
         published: 21
         protocol: tcp
 
-      # range of ports for transfers
+      # range of ports for ftp transfers
       - "30000-30010:30000-30010/tcp"
 
     secrets:
@@ -110,7 +101,7 @@ services:
       context: ./requirements/bonus/adminer/
       dockerfile: Dockerfile
     networks:
-      - inception-backend
+      - backend
     restart: unless-stopped
 
   redis:
@@ -119,7 +110,7 @@ services:
       context: ./requirements/bonus/redis/
       dockerfile: Dockerfile
     networks:
-      - inception-backend
+      - backend
     restart: unless-stopped
 
   redis-admin:
@@ -128,22 +119,22 @@ services:
       context: ./requirements/bonus/redis-admin/
       dockerfile: Dockerfile
     networks:
-      - inception-backend
+      - backend
     volumes:
       - redis-admin-files:/srv/redis-admin
     restart: unless-stopped
 
 secrets:
   ssl-certificate:
-    file: ${SECRETS}/kecheong.42.fr.crt
+    file: ${SECRETS}/${DOMAIN_NAME}.crt
   ssl-certificate-private-key:
-    file: ${SECRETS}/kecheong.42.fr.key
-  db-password:
-    file: ${SECRETS}/db-password.txt
-  wp-admin-password:
-    file: ${SECRETS}/wp-admin-password.txt
-  wp-user-password:
-    file: ${SECRETS}/wp-user-password.txt
+    file: ${SECRETS}/${DOMAIN_NAME}.key
+  db-user-credentials:
+    file: ${SECRETS}/db-user-credentials.txt
+  wp-user-credentials:
+    file: ${SECRETS}/wp-user-credentials.txt
+  wp-admin-credentials:
+    file: ${SECRETS}/wp-admin-credentials.txt
   ftp-user-credentials:
     file: ${SECRETS}/ftp-user-credentials.txt
 
@@ -151,26 +142,26 @@ volumes:
   mariadb-data:
     driver_opts:
       type: none
-      device: /home/kecheong/data/mariadb-data
+      device: ${HOME}/data/mariadb-data
       o: bind
 
   wordpress-files:
     driver_opts:
       type: none
-      device: /home/kecheong/data/wordpress-files
+      device: ${HOME}/data/wordpress-files
       o: bind
 
   redis-admin-files:
     driver_opts:
       type: none
-      device: /home/kecheong/data/redis-admin-files
+      device: ${HOME}/data/redis-admin-files
       o: bind
 
   showcase-site-files:
     driver_opts:
       type: none
-      device: /home/kecheong/data/showcase-site-files
+      device: ${HOME}/data/showcase-site-files
       o: bind
 
 networks:
-  inception-backend:
+  backend:

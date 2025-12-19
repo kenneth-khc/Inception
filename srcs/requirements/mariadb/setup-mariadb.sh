@@ -25,7 +25,9 @@ exitOnError() {
 }
 trap exitOnError ERR
 
-DB_PASSWORD=$(cat "$DB_PASSWORD_FILE")
+CREDENTIALS=/run/secrets/db-user-credentials
+DB_USER=$(awk -F= '$1=="DB_USER" {print $2}' $CREDENTIALS)
+DB_PASSWORD=$(awk -F= '$1=="DB_PASSWORD" {print $2}' $CREDENTIALS)
 echo "Creating user $DB_USER..."
 mariadb -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
 mariadb -e "CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';"
