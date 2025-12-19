@@ -25,6 +25,12 @@ down:
 down_now:
 	docker compose -f $(COMPOSE_FILE) down --timeout=0
 
+start:
+	docker compose -f $(COMPOSE_FILE) start
+
+stop:
+	docker compose -f $(COMPOSE_FILE) stop
+
 WORDPRESS_FILES_VOLUME := inception_wordpress-files
 WORDPRESS_DB_VOLUME := inception_mariadb-data
 REDIS_ADMIN_VOLUME := inception_redis-admin-files
