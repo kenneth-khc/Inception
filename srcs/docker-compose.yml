@@ -23,7 +23,8 @@ services:
 
   wordpress:
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     image: wordpress
     build:
       context: ./requirements
@@ -71,6 +72,12 @@ services:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD_FILE: /run/secrets/db-password
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh" ]
+      interval: 5s
+      timeout: 30s
+      retries: 1
+      start_period: 30s
     restart: unless-stopped
 
   ftp:
