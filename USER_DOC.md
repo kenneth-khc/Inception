@@ -51,8 +51,7 @@ a simple showcase site.
 
 ### Locate and manage credentials
 Credentials will be stored under secrets/ and parsed by the containers on
-runtime. Currently, you can only look into the `docker-compose.yml` file
-to know what secret files are expected.
+runtime. Example files are provided to show the expected credentials.
 
 ### Check that the services are running correctly
 To check running containers, use `docker ps`

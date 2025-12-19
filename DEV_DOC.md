@@ -4,6 +4,8 @@
 A .env.example file is provided that shows the environment variables that
 need to be set up.
 
+Each secret that is expected in the container has a .example file under secrets/
+
 ### Build and launch
 A Makefile is provided for simplifying the common tasks.
 

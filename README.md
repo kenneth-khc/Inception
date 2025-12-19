@@ -27,16 +27,19 @@ These are the following resources that I have utilized in order to complete this
 The [Reference documentation](https://docs.docker.com/reference/) is used during development when writing Dockerfiles,
 Compose files as well as invoking Docker commands on the CLI
 
+[Containers From Scratch](https://www.youtube.com/watch?v=8fi7uSYlOdc) to
+understand namespaces and cgroups
+
 ### WordPress
 Official [WordPress](https://wordpress.com/) website.
 
 [WP-CLI](https://wp-cli.org/) and its [commands](https://developer.wordpress.org/cli/commands/) to programmatically interact with WordPress
 
 ### MariaDB
-[MariaDB docs](https://mariadb.com/docs)
+Official [MariaDB docs](https://mariadb.com/docs)
 
 ### Redis
-[Redis docs](https://redis.io/docs/latest/get-started/)
+Official [Redis docs](https://redis.io/docs/latest/get-started/)
 
 ### FTP
 [Wikipedia](https://en.wikipedia.org/wiki/File_Transfer_Protocol) for the protocol itself
